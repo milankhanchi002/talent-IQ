@@ -5,6 +5,8 @@
 import path from "path"
 import {ENV} from "./lib/env.js"
 
+import {connectDB} from "./lib/db.js"
+
 const __dirname=path.resolve()
 const app=express();
 app.get("/",(req,res)=>{
@@ -19,6 +21,17 @@ if(ENV.NODE_ENV==="production"){
 
     });
 }
-app.listen(ENV.PORT,(e)=>{
-    console.log("server is listining on port ",ENV.PORT)
-})
+
+
+const startServer=async()=>{
+    try{
+        await connectDB();
+        app.listen(ENV.PORT,(e)=>{
+            console.log("server is listining on port ",ENV.PORT)
+        })
+
+    }catch(error){
+        console.log("error starting the server",error)
+    }
+}
+startServer()
