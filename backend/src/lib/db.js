@@ -5,10 +5,10 @@ import {ENV} from "./env.js"
 export const connectDB=async()=>{
     try{
         const conn=await mongoose.connect(ENV.DB_URL)
-        console.log("Connected to mongoDB:",conn.connection.host)
+        console.log("Connected to mongoDB:🐰",conn.connection.host)
 
     }catch(error){
         console.error("error connecting to mongo",error)
-        process.exit(1);//0 means start , i menas failure
+        process.exit(1);//0 means start , 1 menas failure
     }
 }
