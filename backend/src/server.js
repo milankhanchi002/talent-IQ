@@ -5,9 +5,13 @@
 import path from "path"
 import {ENV} from "./lib/env.js"
 import {serve} from "inngest/express"
-import {functions} from "./lib/inngest.js"
+import {inngest,functions} from "./lib/inngest.js"
+import cors from "cors"
 
 import {connectDB} from "./lib/db.js"
+
+const __dirname=path.resolve()
+const app=express();
 
 app.use(express.json())
 //credentials:true -> means? server allows a browser to include cookies on request
@@ -15,8 +19,6 @@ app.use(cors({origin:ENV.CLIENT_URL,credentials:true}));
 
 app.use("/api/inngest",serve({client:inngest,functions}))
 
-const __dirname=path.resolve()
-const app=express();
 app.get("/",(req,res)=>{
     res.status(200).json({msg:"success   from api"})
 })
