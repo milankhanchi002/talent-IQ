@@ -21,6 +21,10 @@ app.get("/",(req,res)=>{
     res.status(200).json({msg:"success   from api"})
 })
 
+app.get("/api/health",(req,res)=>{
+    res.status(200).json({status:"ok",timestamp:new Date().toISOString()})
+})
+
 const startServer=async()=>{
     try{
         await connectDB();
