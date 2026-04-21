@@ -18,22 +18,36 @@ app.use(cors({origin:ENV.CLIENT_URL,credentials:true}));
 app.use("/api/auth", authRoutes)
 
 app.get("/",(req,res)=>{
+    console.log("Root endpoint hit");
     res.status(200).json({msg:"success   from api"})
 })
 
 app.get("/api/health",(req,res)=>{
+    console.log("Health endpoint hit");
     res.status(200).json({status:"ok",timestamp:new Date().toISOString()})
 })
 
 const startServer=async()=>{
     try{
+        console.log("Starting server...");
+        console.log("Environment:", ENV.NODE_ENV);
+        console.log("Port:", ENV.PORT);
+        console.log("Client URL:", ENV.CLIENT_URL);
+        
         await connectDB();
-        app.listen(ENV.PORT,(e)=>{
-            console.log("server is listening on port ",ENV.PORT)
-        })
+        console.log("Database connected successfully");
+        
+        // Add small delay to ensure everything is ready
+        setTimeout(() => {
+            app.listen(ENV.PORT,()=>{
+                console.log("Server is listening on port ",ENV.PORT)
+                console.log("Health check available at / and /api/health")
+            })
+        }, 2000);
 
     }catch(error){
-        console.log("error starting the server",error)
+        console.error("Error starting server:",error);
+        process.exit(1);
     }
 }
 startServer()
