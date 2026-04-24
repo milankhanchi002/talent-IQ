@@ -13,7 +13,15 @@ const app=express();
 
 app.use(express.json())
 //credentials:true -> means? server allows a browser to include cookies on request
-app.use(cors({origin:ENV.CLIENT_URL,credentials:true}));
+// app.use(cors({origin:ENV.CLIENT_URL,credentials:true}));
+app.use(cors({
+    origin: [
+      "http://localhost:5173",
+      "https://talent-iq-khaki.vercel.app",
+      "https://talent-iq-git-main-milankhanchi-4316s-projects.vercel.app"
+    ],
+    credentials: true
+  }));
 
 app.use("/api/auth", authRoutes)
 
