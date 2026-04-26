@@ -40,7 +40,9 @@ router.post('/register', async (req, res) => {
       image: user.profileImage || ''
     };
     
-    await upsertStreamUser(streamUserData);
+    console.log("Creating Stream user:", streamUserData);
+    const streamResult = await upsertStreamUser(streamUserData);
+    console.log("Stream user created successfully:", streamResult);
 
     // Generate token
     const token = jwt.sign(
