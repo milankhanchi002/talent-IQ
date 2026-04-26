@@ -1,5 +1,5 @@
 import {StreamChat} from "stream-chat";
-import { ENV } from "./env";
+import { ENV } from "./env.js";
 import { use } from "react";
 
 const apiKey=ENV.STREAM_API_KEY;
@@ -7,6 +7,8 @@ const apiSecret=ENV.STREAM_API_SECRET;
 
 if(!apiKey || !apiSecret){
     throw new Error("STREAM_API_KEY and STREAM_API_SECRET must be defined in .env file");
+    // console.log("STREAM_API_KEY and STREAM_API_SECRET must be defined in .env file");
+    
 }
 
 export const chatClient = StreamChat.getInstance(apiKey, apiSecret);
