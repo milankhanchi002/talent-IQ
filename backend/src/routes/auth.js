@@ -80,16 +80,6 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
-    // Ensure Stream Chat user exists
-    const streamUserData = {
-      id: user._id.toString(),
-      name: user.name,
-      email: user.email,
-      image: user.profileImage || ''
-    };
-    
-    await upsertStreamUser(streamUserData);
-
     // Generate token
     const token = jwt.sign(
       { userId: user._id, email: user.email },
