@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import { ENV } from '../lib/env.js';
+import { upsertStreamUser, deleteStreamUser } from '../lib/stream.js';
 
 const router = express.Router();
 
@@ -30,6 +31,16 @@ router.post('/register', async (req, res) => {
     });
 
     await user.save();
+
+    // Create Stream Chat user
+    const streamUserData = {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      image: user.profileImage || ''
+    };
+    
+    await upsertStreamUser(streamUserData);
 
     // Generate token
     const token = jwt.sign(
@@ -69,6 +80,16 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
 
+    // Ensure Stream Chat user exists
+    const streamUserData = {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      image: user.profileImage || ''
+    };
+    
+    await upsertStreamUser(streamUserData);
+
     // Generate token
     const token = jwt.sign(
       { userId: user._id, email: user.email },
@@ -83,6 +104,38 @@ router.post('/login', async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete user account
+router.delete('/delete-account', async (req, res) => {
+  try {
+    const { userId } = req.body;
+    
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    // Delete user from MongoDB
+    const deletedUser = await User.findByIdAndDelete(userId);
+    
+    if (!deletedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Delete user from Stream Chat
+    await deleteStreamUser(userId);
+
+    res.json({
+      message: 'User account deleted successfully',
+      user: {
+        id: deletedUser._id,
+        name: deletedUser.name,
+        email: deletedUser.email
       }
     });
   } catch (error) {
